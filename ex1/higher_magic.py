@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from typing import Any
 
 
 def spell_combiner(spell1: Callable, spell2: Callable) -> Callable:
@@ -8,15 +9,29 @@ def spell_combiner(spell1: Callable, spell2: Callable) -> Callable:
 
 
 def power_amplifier(base_spell: Callable, multiplier: int) -> Callable:
-    pass
+    def amplifier(target: str, power: int) -> Any:
+        new_power: int = power * multiplier
+        return base_spell(target, new_power)
+    return amplifier
 
 
-def conditional_caster(condition: Callable, spell: Callable) -> Callable:
-    pass
+def conditional_caster(condition: Callable, spell: Callable) -> Callable | str:
+    # Condition
+    def new_spell(target: str, power: int) -> str:
+        return f"{target} hit by a truck for {power} HP"
+
+    if condition() is True:
+        return new_spell
+    return "Spell fizzled"
 
 
 def spell_sequence(spells: list[Callable]) -> Callable:
-    pass
+    # secuencia de spells
+    def all_spells(target: str, power: int) -> Any:
+        for spell in spells:
+            print(spell(target, power))
+
+    return all_spells
 
 
 # Spell functions
@@ -31,16 +46,26 @@ def fireball(target: str, power: int) -> str:
 
 
 def main() -> None:
-    spell1 = heal
-    spell2 = fireball
 
     test_values = [23, 13, 12]
     test_targets = ['Dragon', 'Goblin', 'Wizard', 'Knight']
 
-    print(spell2(test_targets[0], test_values[0]))
+    print(heal(test_targets[0], test_values[0]))
 
-    combined = spell_combiner(spell1, spell2)
+    combined = spell_combiner(heal, fireball)
     print(combined(test_targets[0], test_values[0]))
+
+    mega_fireball = power_amplifier(fireball, 3)
+    print(mega_fireball(test_targets[0], test_values[0]))
+
+    seq = spell_sequence([heal, fireball])
+    seq(test_targets[0], test_values[0])
+
+
+def tester() -> None:
+    combined =
+    print("Testing spell combiner...")
+    print(f"Combined spell result: {combined}")
 
 
 if __name__ == "__main__":
